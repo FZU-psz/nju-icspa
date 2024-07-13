@@ -105,20 +105,31 @@ static int cmd_x(char *args){
     return 0;
   }
   int n=atoi(arg1);
-  bool success=true;
-  word_t addr=expr(arg2,&success);
-  if(success){
-    for(int i=0;i<n;i++){
-      if(i%4==0){
-        printf("0x%08x: ",addr+i);
-      }
-      vaddr_t vaddr = addr+i;
-      printf("0x%02x ",vaddr_read(vaddr ,1));
-      if((i+1)%4==0){
-        printf("\n");
-      }
+  char * hex_str = arg2;
+  vaddr_t vaddr_start = strtol(hex_str,NULL,16);
+  for(int i=0;i<n;i++){
+    if(i%4==0){
+      printf("0x%08x: ",vaddr_start+i);
+    }
+    printf("0x%02x ",vaddr_read(vaddr_start+i ,1));
+    if((i+1)%4==0){
+      printf("\n");
     }
   }
+  // bool success=true;
+  // word_t addr=expr(arg2,&success);
+  // if(success){
+  //   for(int i=0;i<n;i++){
+  //     if(i%4==0){
+  //       printf("0x%08x: ",addr+i);
+  //     }
+  //     vaddr_t vaddr = addr+i;
+  //     printf("0x%02x ",vaddr_read(vaddr ,1));
+  //     if((i+1)%4==0){
+  //       printf("\n");
+  //     }
+  //   }
+  // }
   return 0;
 }
 static struct {
