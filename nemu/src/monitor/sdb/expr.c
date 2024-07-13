@@ -214,8 +214,5 @@ word_t expr(char *e, bool *success) {
   /* TODO: Insert codes to evaluate the expression. */
   // TODO();
   word_t result = eval(0,nr_token-1);
-  // printf("result=%d\n",result);
-  // return result;
-  // return 0;
   return result;
 }

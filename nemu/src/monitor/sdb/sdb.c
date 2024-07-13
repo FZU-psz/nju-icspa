@@ -18,7 +18,8 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
-
+#include "common.h"
+#include <memory/vaddr.h>
 static int is_batch_mode = false;
 
 void init_regex();
@@ -95,7 +96,30 @@ static int cmd_p(char *args){
     printf("0x%08x\n",result);
   }
   return 0;
-
+}
+static int cmd_x(char *args){
+  char *arg1 = strtok(NULL, " ");
+  char *arg2 = strtok(NULL, " ");
+  if(arg1==NULL||arg2==NULL){
+    printf("Please input the argument\n");
+    return 0;
+  }
+  int n=atoi(arg1);
+  bool success=true;
+  word_t addr=expr(arg2,&success);
+  if(success){
+    for(int i=0;i<n;i++){
+      if(i%4==0){
+        printf("0x%08x: ",addr+i);
+      }
+      vaddr_t vaddr = addr+i;
+      printf("0x%02x ",vaddr_read(vaddr ,1));
+      if((i+1)%4==0){
+        printf("\n");
+      }
+    }
+  }
+  return 0;
 }
 static struct {
   const char *name;
@@ -110,7 +134,8 @@ static struct {
   /* TODO: Add more commands */
   [3]={"si","si N: Execute N step",cmd_si},
   [4]={"info","info r: Printf the info about register\ninfo w: Printf the info about watch point",cmd_info},
-  [5]={"p","p EXPR: Calculate the value of the expression",cmd_p}
+  [5]={"p","p EXPR: Calculate the value of the expression",cmd_p},
+  [6]={"x","x N EXPR: Scan memory from expr",cmd_x},
 };
 
 #define NR_CMD ARRLEN(cmd_table)
