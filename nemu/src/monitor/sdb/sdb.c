@@ -75,7 +75,7 @@ static int cmd_info(char *args){
   }
   if(strcmp(arg,"r")==0){
     //打印寄存器的值
-
+    isa_reg_display();
   }
   else if(strcmp(arg,"w")==0){
     //打印监视点的信息
