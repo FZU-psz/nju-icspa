@@ -116,6 +116,7 @@ static int cmd_x(char *args){
       printf("\n");
     }
   }
+  printf("\n");
   // bool success=true;
   // word_t addr=expr(arg2,&success);
   // if(success){
