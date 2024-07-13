@@ -79,12 +79,23 @@ static int cmd_info(char *args){
   }
   else if(strcmp(arg,"w")==0){
     //打印监视点的信息
+    // TODO: Print watchpoint info
     printf("No watchpoint\n");
   }
   else{
     printf("Unknown command '%s'\n", arg);
   }
   return 0;
+}
+
+static int cmd_p(char *args){
+  bool success=true;
+  word_t result=expr(args,&success);
+  if(success){
+    printf("0x%08x\n",result);
+  }
+  return 0;
+
 }
 static struct {
   const char *name;
@@ -98,8 +109,8 @@ static struct {
 
   /* TODO: Add more commands */
   [3]={"si","si N: Execute N step",cmd_si},
-  [4]={"info","info r: Printf the info about register\ninfo w: Printf the info about watch point",cmd_info}
-
+  [4]={"info","info r: Printf the info about register\ninfo w: Printf the info about watch point",cmd_info},
+  [5]={"p","p EXPR: Calculate the value of the expression",cmd_p}
 };
 
 #define NR_CMD ARRLEN(cmd_table)

@@ -13,6 +13,7 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#include "common.h"
 #include <isa.h>
 
 /* We use the POSIX regex functions to process regular expressions.
@@ -22,9 +23,8 @@
 
 enum {
   TK_NOTYPE = 256, TK_EQ,
-
   /* TODO: Add more token types */
-
+  TK_NUM,TK_VAR
 };
 
 static struct rule {
@@ -39,6 +39,13 @@ static struct rule {
   {" +", TK_NOTYPE},    // spaces
   {"\\+", '+'},         // plus
   {"==", TK_EQ},        // equal
+  [3] = {"\\-", '-'},   // minus
+  [4] = {"\\*", '*'},   // multiply
+  [5] = {"\\/", '/'},   // divide
+  [6] = {"\\(", '('},   // left bracket
+  [7] = {"\\)", ')'},   // right bracket
+  [8] = {"[0-9]+", TK_NUM}, // number
+  [9] = {"[a-zA-Z_][a-zA-Z0-9_]*", TK_VAR}, // variable
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -93,10 +100,12 @@ static bool make_token(char *e) {
          * to record the token in the array `tokens'. For certain types
          * of tokens, some extra actions should be performed.
          */
-
-        switch (rules[i].token_type) {
-          default: TODO();
-        }
+        tokens[nr_token].type = rules[i].token_type;
+        strncpy(tokens[nr_token].str, substr_start, substr_len);
+        nr_token++;
+        // switch (rules[i].token_type) {
+        //   default: TODO();
+        // }
 
         break;
       }
@@ -110,8 +119,91 @@ static bool make_token(char *e) {
 
   return true;
 }
+bool check_parentheses(int p,int q){
+  int i;
+  int cnt=0;
+  if(tokens[p].type!='('||tokens[q].type!=')'){
+    return false;
+  }
+  for(i=p;i<=q;i++){
+    if(tokens[i].type=='('){
+      cnt++;
+    }
+    else if(tokens[i].type==')'){
+      if(cnt==0){//提前退出
+        return false;
+      }
+      cnt--;
+    }
+    //如果左括号的数量比右括号的数量多,则不合法
+    if(cnt==0&&i!=q){
+      return false;
+    }
+  }
+  return true;
+}
+int find_op(int p,int q,char *op_type){
+  int i;
+  int op_pos=-1;
+  int op_level=0;
+  for(i=q;i>=p;i--){
+    if(tokens[i].type==TK_NUM){
+      continue;
+    }
+    else if(tokens[i].type==TK_VAR){
+      continue;
+    }
+    else if(tokens[i].type=='('){
+      continue;
+    }
+    else if(tokens[i].type==')'){
+      continue;
+    }
+    else if(tokens[i].type=='+'||tokens[i].type=='-'){
+      if(op_level<=1){
+        op_level=1;
+        op_pos=i;
+        *op_type=tokens[i].type;
+      }
+    }
+    else if(tokens[i].type=='*'||tokens[i].type=='/'){
+      if(op_level<=2){
+        op_level=2;
+        op_pos=i;
+        *op_type=tokens[i].type;
+      }
+    }
+  }
+  return op_pos;
+}
+word_t eval(int p,int q){
+  if(p>q){
+    return 0;
+  }
+  else if(p==q){
+    if(tokens[p].type==TK_NUM){
+      return atoi(tokens[p].str);
+    }
+  }
+  else if(check_parentheses(p,q)==true){
+    //括号的数量能对上,但是不一定是合法的
+    return eval(p+1,q-1);
+  }
+  else {
+   //找出运算符号
+    char * op_type=NULL;
+    int op_pos= find_op(p,q, op_type);
 
-
+    switch(op_pos){
+      case '+': return eval(p,op_pos-1)+eval(op_pos+1,q);
+      case '-': return eval(p,op_pos-1)-eval(op_pos+1,q);
+      case '*': return eval(p,op_pos-1)*eval(op_pos+1,q);
+      case '/': return eval(p,op_pos-1)/eval(op_pos+1,q);
+      default: assert(0);
+    }
+  }
+  return 0;
+}
 word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
     *success = false;
@@ -119,7 +211,8 @@ word_t expr(char *e, bool *success) {
   }
 
   /* TODO: Insert codes to evaluate the expression. */
-  TODO();
-
-  return 0;
+  // TODO();
+  word_t result = eval(0,nr_token-1);
+  return result;
+  // return 0;
 }
