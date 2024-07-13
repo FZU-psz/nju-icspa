@@ -192,8 +192,8 @@ word_t eval(int p,int q){
   }
   else {
    //找出主运算符号
-    char * op_type=NULL;
-    int op_pos= find_op(p,q, op_type);
+    char op_type;
+    int op_pos= find_op(p,q, &op_type);
 
     switch(op_pos){
       case '+': return eval(p,op_pos-1)+eval(op_pos+1,q);
