@@ -106,7 +106,7 @@ static bool make_token(char *e) {
         // switch (rules[i].token_type) {
         //   default: TODO();
         // }
-        // printf("str=%s\n",tokens[nr_token-1].str);
+        printf("str=%s\n",tokens[nr_token-1].str);
 
         break;
       }
