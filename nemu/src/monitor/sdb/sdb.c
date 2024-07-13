@@ -67,7 +67,25 @@ static int cmd_si(char *args){
   }
   return 0;
 }
+static int cmd_info(char *args){
+  char *arg = strtok(NULL, " ");
+  if(arg==NULL){
+    printf("Please input the argument\n");
+    return 0;
+  }
+  if(strcmp(arg,"r")==0){
+    //打印寄存器的值
 
+  }
+  else if(strcmp(arg,"w")==0){
+    //打印监视点的信息
+    printf("No watchpoint\n");
+  }
+  else{
+    printf("Unknown command '%s'\n", arg);
+  }
+  return 0;
+}
 static struct {
   const char *name;
   const char *description;
@@ -80,6 +98,7 @@ static struct {
 
   /* TODO: Add more commands */
   [3]={"si","si N: Execute N step",cmd_si},
+  [4]={"info","info r: Printf the info about register\ninfo w: Printf the info about watch point",cmd_info}
 
 };
 
