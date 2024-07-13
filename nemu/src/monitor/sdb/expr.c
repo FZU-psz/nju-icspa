@@ -106,6 +106,7 @@ static bool make_token(char *e) {
         // switch (rules[i].token_type) {
         //   default: TODO();
         // }
+        printf("str=%s\n",tokens[nr_token-1].str);
 
         break;
       }
@@ -199,7 +200,7 @@ word_t eval(int p,int q){
       case '-': return eval(p,op_pos-1)-eval(op_pos+1,q);
       case '*': return eval(p,op_pos-1)*eval(op_pos+1,q);
       case '/': return eval(p,op_pos-1)/eval(op_pos+1,q);
-      // default: assert(0);
+      default: assert(0);
     }
   }
   return 0;
