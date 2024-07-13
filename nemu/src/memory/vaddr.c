@@ -16,6 +16,7 @@
 #include <isa.h>
 #include <memory/paddr.h>
 
+//vaddr_ifetch 和 vaddr_read 是一样的诶，为了区分含义而分开?
 word_t vaddr_ifetch(vaddr_t addr, int len) {
   return paddr_read(addr, len);
 }

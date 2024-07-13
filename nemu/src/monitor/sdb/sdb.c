@@ -54,6 +54,20 @@ static int cmd_q(char *args) {
 
 static int cmd_help(char *args);
 
+//默认执行1步，如果有参数则执行参数指定的步数n
+static int cmd_si(char *args){
+  char *arg = strtok(NULL, " ");
+  if(arg==NULL){
+    cpu_exec(1);
+  }
+  else{
+    //atoi 将字符串转换为整数
+    int n=atoi(arg);
+    cpu_exec(n);
+  }
+  return 0;
+}
+
 static struct {
   const char *name;
   const char *description;
@@ -62,8 +76,10 @@ static struct {
   { "help", "Display information about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
+  
 
   /* TODO: Add more commands */
+  [3]={"si","si N: Execute N step",cmd_si},
 
 };
 
