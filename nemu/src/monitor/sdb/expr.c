@@ -190,7 +190,7 @@ word_t eval(int p,int q){
     return eval(p+1,q-1);
   }
   else {
-   //找出运算符号
+   //找出主运算符号
     char * op_type=NULL;
     int op_pos= find_op(p,q, op_type);
 
@@ -199,7 +199,7 @@ word_t eval(int p,int q){
       case '-': return eval(p,op_pos-1)-eval(op_pos+1,q);
       case '*': return eval(p,op_pos-1)*eval(op_pos+1,q);
       case '/': return eval(p,op_pos-1)/eval(op_pos+1,q);
-      default: assert(0);
+      // default: assert(0);
     }
   }
   return 0;
