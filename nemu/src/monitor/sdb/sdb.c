@@ -159,11 +159,11 @@ static int cmd_d(char *args){
   int num = atoi(args);
   bool success = false;
   del_wp(num,&success);
-  if(!success){
-    printf("Successfully del wactchpoint");
+  if(success){
+    printf("Successfully del wactchpoint\n");
   }
   else 
-    printf("Failed to delete watchpoint");
+    printf("Failed to delete watchpoint\n");
   return 0;
 }
 static struct {
