@@ -157,7 +157,8 @@ int find_op(int p,int q,int  *op_type){
       continue;
     }
     else if(tokens[i].type==')'){
-      continue;
+      do i--; while(tokens[i].type!='(');
+      i--;
     }
     else if(tokens[i].type==TK_EQ||tokens[i].type==TK_NOTEQ||tokens[i].type==TK_AND){
       if(op_level<=3){
