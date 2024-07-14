@@ -237,7 +237,7 @@ word_t eval(int p,int q){
       case TK_NOTEQ: return eval(p,op_pos-1)!=eval(op_pos+1,q);
       case TK_AND: return eval(p,op_pos-1)&&eval(op_pos+1,q);
       case DEREF: return vaddr_read(eval(op_pos+1,q),4);
-      default: assert(0);
+      
     }
   }
   return 0;
