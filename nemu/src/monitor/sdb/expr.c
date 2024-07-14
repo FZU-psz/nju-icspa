@@ -139,7 +139,7 @@ bool check_parentheses(int p,int q){
       cnt--;
     }
     //如果左括号的数量比右括号的数量多,则不合法
-    if(cnt==0&&i!=q-1){
+    if(cnt<0&&i!=q-1){
       return false;
     }
   }
