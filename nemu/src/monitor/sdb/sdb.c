@@ -26,10 +26,11 @@ static int is_batch_mode = false;
 typedef struct watchpoint {
   int NO;
   struct watchpoint *next;
-  char *expr;
+  char expr[256];
   int val;
   /* TODO: Add more members if necessary */
 } WP;
+
 extern WP *new_wp();
 extern void free_wp(WP *wp);
 void init_regex();
