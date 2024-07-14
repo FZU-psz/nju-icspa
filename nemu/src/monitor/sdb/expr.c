@@ -20,11 +20,12 @@
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
+#include<memory/vaddr.h>
 
 enum {
   TK_NOTYPE = 256, TK_EQ,
   /* TODO: Add more token types */
-  TK_NUM,TK_VAR
+  TK_NUM,TK_VAR,TK_AND,TK_NOTEQ,TK_HEXNUM,TK_REG,DEREF
 };
 
 static struct rule {
@@ -45,7 +46,10 @@ static struct rule {
   [6] = {"\\(", '('},   // left bracket
   [7] = {"\\)", ')'},   // right bracket
   [8] = {"[0-9]+", TK_NUM}, // number
-  [9] = {"[a-zA-Z_][a-zA-Z0-9_]*", TK_VAR}, // variable
+  [9] = {"$[a-zA-Z_][a-zA-Z0-9_]*", TK_REG}, // register
+  [10] = {"&&", TK_AND}, // and
+  [11] = {"!=", TK_NOTEQ}, // not equal
+  [12] = {"0x[0-9a-fA-F]+", TK_HEXNUM}, // hex number
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -143,15 +147,12 @@ bool check_parentheses(int p,int q){
   }
   return true;
 }
-int find_op(int p,int q,char *op_type){
+int find_op(int p,int q,int  *op_type){
   int i;
   int op_pos=-1;
   int op_level=0;
   for(i=q;i>=p;i--){
-    if(tokens[i].type==TK_NUM){
-      continue;
-    }
-    else if(tokens[i].type==TK_VAR){
+    if(tokens[i].type==TK_NUM || tokens[i].type==TK_HEXNUM || tokens[i].type==TK_REG){
       continue;
     }
     else if(tokens[i].type=='('){
@@ -160,21 +161,36 @@ int find_op(int p,int q,char *op_type){
     else if(tokens[i].type==')'){
       continue;
     }
-    else if(tokens[i].type=='+'||tokens[i].type=='-'){
-      if(op_level<=1){
-        op_level=1;
+    else if(tokens[i].type==TK_EQ||tokens[i].type==TK_NOTEQ||tokens[i].type==TK_AND){
+      if(op_level<=3){
+        op_level=3;
         op_pos=i;
         *op_type=tokens[i].type;
       }
     }
-    else if(tokens[i].type=='*'||tokens[i].type=='/'){
+    else if(tokens[i].type=='+'||tokens[i].type=='-'){
       if(op_level<=2){
         op_level=2;
         op_pos=i;
         *op_type=tokens[i].type;
       }
     }
+    else if(tokens[i].type=='*'||tokens[i].type=='/'){
+      if(op_level<=1){
+        op_level=1;
+        op_pos=i;
+        *op_type=tokens[i].type;
+      }
+    }
+    else if(tokens[i].type == DEREF){
+      if(op_level<=0){
+        op_level=0;
+        op_pos=i;
+        *op_type=tokens[i].type;
+      }
+    }
   }
+  
   return op_pos;
 }
 word_t eval(int p,int q){
@@ -185,6 +201,23 @@ word_t eval(int p,int q){
     if(tokens[p].type==TK_NUM){
       return atoi(tokens[p].str);
     }
+    else if(tokens[p].type==TK_HEXNUM){
+      return strtol(tokens[p].str,NULL,16);
+    }
+    else if(tokens[p].type==TK_REG){
+      bool * success = false;
+      word_t result = isa_reg_str2val(tokens[p].str, success);
+      if(*success){
+        return result;
+      }
+      else{
+        printf("Register not found\n");
+        return 0;
+      }
+    }
+    else{
+      Assert(0,"Invalid expression");
+    }
   }
   else if(check_parentheses(p,q)==true){
     //括号的数量能对上,但是不一定是合法的
@@ -192,7 +225,7 @@ word_t eval(int p,int q){
   }
   else {
    //找出主运算符号
-    char op_type;
+    int  op_type;
     int op_pos= find_op(p,q, &op_type);
 
     switch(op_type){
@@ -200,6 +233,10 @@ word_t eval(int p,int q){
       case '-': return eval(p,op_pos-1)-eval(op_pos+1,q);
       case '*': return eval(p,op_pos-1)*eval(op_pos+1,q);
       case '/': return eval(p,op_pos-1)/eval(op_pos+1,q);
+      case TK_EQ: return eval(p,op_pos-1)==eval(op_pos+1,q);
+      case TK_NOTEQ: return eval(p,op_pos-1)!=eval(op_pos+1,q);
+      case TK_AND: return eval(p,op_pos-1)&&eval(op_pos+1,q);
+      case DEREF: return vaddr_read(eval(op_pos+1,q),4);
       default: assert(0);
     }
   }
@@ -213,6 +250,11 @@ word_t expr(char *e, bool *success) {
 
   /* TODO: Insert codes to evaluate the expression. */
   // TODO();
+  for (int i = 0; i < nr_token; i ++) {
+  if (tokens[i].type == '*' && (i == 0 || (tokens[i - 1].type != TK_NUM && tokens[i-1].type!=TK_HEXNUM && tokens[i-1].type != ')')) ) {
+    tokens[i].type = DEREF;
+  }
+}
   word_t result = eval(0,nr_token-1);
   return result;
 }
