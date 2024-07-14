@@ -156,7 +156,6 @@ int find_op(int p,int q,int  *op_type){
     else if(tokens[i].type==')'){
       for(;i>=p;i--){
         if(tokens[i].type=='('){
-          i--;
           break;
         }
       }
