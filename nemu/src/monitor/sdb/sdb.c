@@ -20,6 +20,7 @@
 #include <memory/vaddr.h>
 #include <readline/history.h>
 #include <readline/readline.h>
+#include <stdlib.h>
 #include <string.h>
 
 static int is_batch_mode = false;
@@ -90,7 +91,6 @@ static int cmd_info(char *args) {
     // 打印监视点的信息
     //  TODO: Print watchpoint info
     print_wp();
-    printf("No watchpoint\n");
   } else {
     printf("Unknown command '%s'\n", arg);
   }
@@ -154,7 +154,18 @@ static int cmd_w(char *args) {
   }
   return 0;
 }
-
+extern void del_wp(int num,bool *success);
+static int cmd_d(char *args){
+  int num = atoi(args);
+  bool success = false;
+  del_wp(num,&success);
+  if(!success){
+    printf("Successfully del wactchpoint");
+  }
+  else 
+    printf("Failed to delete watchpoint");
+  return 0;
+}
 static struct {
   const char *name;
   const char *description;
@@ -173,6 +184,7 @@ static struct {
     {"p", "p EXPR: Calculate the value of the expression", cmd_p},
     {"x", "x N EXPR: Scan memory from expr", cmd_x},
     {"w", "w EXPR: Watch the value of EXPR", cmd_w},
+    {"d", "d p: Delete Watchpoint p",cmd_d}
 };
 
 #define NR_CMD ARRLEN(cmd_table)

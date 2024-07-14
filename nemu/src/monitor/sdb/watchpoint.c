@@ -105,3 +105,13 @@ void print_wp(){
     p=p->next;
   }
 }
+void del_wp(int num,bool * success){
+  WP* p = head;
+  while(p!=NULL){
+    if(p->NO == num){
+      free_wp(p);
+      *success = true;
+      return;
+    }
+  }
+}
