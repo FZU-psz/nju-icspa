@@ -14,15 +14,16 @@
 ***************************************************************************************/
 
 #include "sdb.h"
+#include "utils.h"
 
 #define NR_WP 32
 
 typedef struct watchpoint {
   int NO;
   struct watchpoint *next;
-
+  char *expr;
+  int val;
   /* TODO: Add more members if necessary */
-
 } WP;
 
 static WP wp_pool[NR_WP] = {};
@@ -40,4 +41,51 @@ void init_wp_pool() {
 }
 
 /* TODO: Implement the functionality of watchpoint */
-
+WP* new_wp(){
+  if(free_==NULL){
+    printf("No enough watchpoints!\n");
+    assert(0);
+  }
+  WP* new=free_;
+  free_=free_->next;
+  new->next=head;
+  head=new;
+  return new;
+}
+void free_wp(WP *wp){
+  WP* p=head;
+  if(p==wp){
+    head=head->next;
+    wp->next=free_;
+    free_=wp;
+    return;
+  }
+  while(p->next!=NULL){
+    if(p->next==wp){
+      p->next=wp->next;
+      wp->next=free_;
+      free_=wp;
+      return;
+    }
+    p=p->next;
+  }
+  printf("No such watchpoint!\n");
+  assert(0);
+}
+void scan_wp(){
+  WP* p=head;
+  bool flag = false;
+  while(p!=NULL){
+    bool success=true;
+    word_t val = expr(p->expr,&success);
+    if(val != p->val){//值发生了变化
+      flag = true;
+      p->val = val;
+  }
+  if(flag){
+      nemu_state.state =NEMU_STOP;
+      printf("The value of Watchpoints changed!\n");
+      return;
+    }
+  }
+}

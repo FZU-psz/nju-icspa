@@ -20,8 +20,17 @@
 #include "sdb.h"
 #include "common.h"
 #include <memory/vaddr.h>
-static int is_batch_mode = false;
 
+static int is_batch_mode = false;
+typedef struct watchpoint {
+  int NO;
+  struct watchpoint *next;
+  char *expr;
+  int val;
+  /* TODO: Add more members if necessary */
+} WP;
+extern WP* new_wp();
+extern void free_wp(WP *wp);
 void init_regex();
 void init_wp_pool();
 
@@ -105,32 +114,42 @@ static int cmd_x(char *args){
     return 0;
   }
   int n=atoi(arg1);
-  char * hex_str = arg2;
-  vaddr_t vaddr_start = strtol(hex_str,NULL,16);
-  for(int i=0;i<n;i++){
-    if(i%4==0){
-      printf("0x%08x: ",vaddr_start+i);
-    }
-    printf("0x%02x ",vaddr_read(vaddr_start+i ,1));
-    if((i+1)%4==0){
-      printf("\n");
-    }
-  }
-  printf("\n");
-  // bool success=true;
-  // word_t addr=expr(arg2,&success);
-  // if(success){
-  //   for(int i=0;i<n;i++){
-  //     if(i%4==0){
-  //       printf("0x%08x: ",addr+i);
-  //     }
-  //     vaddr_t vaddr = addr+i;
-  //     printf("0x%02x ",vaddr_read(vaddr ,1));
-  //     if((i+1)%4==0){
-  //       printf("\n");
-  //     }
+  // char * hex_str = arg2;
+  // vaddr_t vaddr_start = strtol(hex_str,NULL,16);
+  // for(int i=0;i<n;i++){
+  //   if(i%4==0){
+  //     printf("0x%08x: ",vaddr_start+i);
+  //   }
+  //   printf("0x%02x ",vaddr_read(vaddr_start+i ,1));
+  //   if((i+1)%4==0){
+  //     printf("\n");
   //   }
   // }
+  // printf("\n");
+  bool success=true;
+  word_t addr=expr(arg2,&success);
+  if(success){
+    for(int i=0;i<n;i++){
+      if(i%4==0){
+        printf("0x%08x: ",addr+i);
+      }
+      vaddr_t vaddr = addr+i;
+      printf("0x%02x ",vaddr_read(vaddr ,1));
+      if((i+1)%4==0){
+        printf("\n");
+      }
+    }
+  }
+  return 0;
+}
+static int  cmd_w(char *args){
+  WP* new=new_wp();
+  bool success=true;
+  new->expr = args;
+  new->val = expr(args,&success);
+  if(success){
+    printf("Watchpoint %d: %s\n",new->NO,args);
+  }
   return 0;
 }
 static struct {
@@ -148,6 +167,7 @@ static struct {
   [4]={"info","info r: Printf the info about register\ninfo w: Printf the info about watch point",cmd_info},
   [5]={"p","p EXPR: Calculate the value of the expression",cmd_p},
   [6]={"x","x N EXPR: Scan memory from expr",cmd_x},
+  [7]={"w","w EXPR: Watch the value of EXPR",cmd_w},
 };
 
 #define NR_CMD ARRLEN(cmd_table)
