@@ -20,6 +20,7 @@
 #include <memory/vaddr.h>
 #include <readline/history.h>
 #include <readline/readline.h>
+#include <string.h>
 
 static int is_batch_mode = false;
 typedef struct watchpoint {
@@ -138,10 +139,12 @@ static int cmd_x(char *args) {
   return 0;
 }
 static int cmd_w(char *args) {
+  char buffer[256];
   WP *new = new_wp();
   bool success = true;
   new->expr = args;
-  new->val = expr(args, &success);
+  strncpy(buffer, args, 256);
+  new->val = expr(buffer, &success);
   if (success) {
     printf("Watchpoint %d: %s\n", new->NO, args);
   }
