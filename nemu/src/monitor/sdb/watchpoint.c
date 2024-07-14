@@ -82,10 +82,9 @@ void scan_wp(){
       flag = true;
       p->val = val;
   }
+  }
   if(flag){
       nemu_state.state =NEMU_STOP;
       printf("The value of Watchpoints changed!\n");
-      return;
-    }
   }
 }
