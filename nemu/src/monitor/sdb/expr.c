@@ -127,21 +127,19 @@ static bool make_token(char *e) {
 bool check_parentheses(int p,int q){
   int i;
   int cnt=0;
-  if(tokens[p].type!='('||tokens[q].type!=')'){
+
+  if(tokens[p].type!='('||tokens[q].type!=')'){//如果整个表达不是被括号包围的
     return false;
   }
-  for(i=p;i<=q;i++){
+  for(i=p+1;i<=q-1;i++){
     if(tokens[i].type=='('){
       cnt++;
     }
     else if(tokens[i].type==')'){
-      if(cnt==0){//提前退出
-        return false;
-      }
       cnt--;
     }
     //如果左括号的数量比右括号的数量多,则不合法
-    if(cnt==0&&i!=q){
+    if(cnt==0&&i!=q-1){
       return false;
     }
   }
