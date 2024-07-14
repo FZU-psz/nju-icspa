@@ -22,7 +22,7 @@
 typedef struct watchpoint {
   int NO;
   struct watchpoint *next;
-  char *expr;
+  char expr[256];
   int val;
   /* TODO: Add more members if necessary */
 } WP;

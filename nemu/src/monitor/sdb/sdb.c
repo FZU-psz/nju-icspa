@@ -142,7 +142,7 @@ static int cmd_w(char *args) {
   char buffer[256];
   WP *new = new_wp();
   bool success = true;
-  new->expr = args;
+  strncpy(new->expr, args, 256);
   strncpy(buffer, args, 256);
   new->val = expr(buffer, &success);
   if (success) {
