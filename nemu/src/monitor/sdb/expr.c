@@ -46,7 +46,7 @@ static struct rule {
   [6] = {"\\(", '('},   // left bracket
   [7] = {"\\)", ')'},   // right bracket
   [8] = {"[0-9]+", TK_NUM}, // number
-  [9] = {"$[a-zA-Z_][a-zA-Z0-9_]*", TK_REG}, // register
+  [9] = {"\\$[a-zA-Z_][a-zA-Z0-9_]*", TK_REG}, // register
   [10] = {"&&", TK_AND}, // and
   [11] = {"!=", TK_NOTEQ}, // not equal
   [12] = {"0x[0-9a-fA-F]+", TK_HEXNUM}, // hex number
