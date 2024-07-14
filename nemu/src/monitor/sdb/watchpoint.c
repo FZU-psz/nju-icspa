@@ -81,7 +81,8 @@ void scan_wp(){
     if(val != p->val){//值发生了变化
       flag = true;
       p->val = val;
-  }
+    }
+    p = p->next;
   }
   if(flag){
       nemu_state.state =NEMU_STOP;
