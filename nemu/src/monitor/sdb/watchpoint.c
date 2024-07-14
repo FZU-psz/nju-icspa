@@ -81,7 +81,6 @@ void scan_wp(){
   bool flag = false;
   while(p!=NULL){
     bool success=true;
-    
     strncpy(expr_buffer, p->expr, 256);
     word_t val = expr(expr_buffer,&success);
     if(val != p->val){//值发生了变化
