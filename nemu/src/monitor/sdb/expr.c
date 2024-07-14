@@ -153,12 +153,13 @@ int find_op(int p,int q,int  *op_type){
     if(tokens[i].type==TK_NUM || tokens[i].type==TK_HEXNUM || tokens[i].type==TK_REG){
       continue;
     }
-    else if(tokens[i].type=='('){
-      continue;
-    }
     else if(tokens[i].type==')'){
-      do i--; while(tokens[i].type!='(');
-      i--;
+      for(;i>=p;i--){
+        if(tokens[i].type=='('){
+          i--;
+          break;
+        }
+      }
     }
     else if(tokens[i].type==TK_EQ||tokens[i].type==TK_NOTEQ||tokens[i].type==TK_AND){
       if(op_level<=3){
