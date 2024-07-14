@@ -95,3 +95,13 @@ void scan_wp(){
       printf("The value of Watchpoints changed!\n");
   }
 }
+void print_wp(){
+  WP* p=head;
+  if(p==NULL){
+    printf("No watchpoint\n");
+  }
+  while(p!=NULL){
+    printf("Watchpoint %d: %s\n",p->NO,p->expr);
+    p=p->next;
+  }
+}

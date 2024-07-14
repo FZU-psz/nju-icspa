@@ -76,6 +76,7 @@ static int cmd_si(char *args) {
   }
   return 0;
 }
+extern void print_wp();
 static int cmd_info(char *args) {
   char *arg = strtok(NULL, " ");
   if (arg == NULL) {
@@ -88,6 +89,7 @@ static int cmd_info(char *args) {
   } else if (strcmp(arg, "w") == 0) {
     // 打印监视点的信息
     //  TODO: Print watchpoint info
+    print_wp();
     printf("No watchpoint\n");
   } else {
     printf("Unknown command '%s'\n", arg);
@@ -139,6 +141,7 @@ static int cmd_x(char *args) {
   }
   return 0;
 }
+
 static int cmd_w(char *args) {
   char buffer[256];
   WP *new = new_wp();
@@ -162,14 +165,14 @@ static struct {
     {"q", "Exit NEMU", cmd_q},
 
     /* TODO: Add more commands */
-    [3] = {"si", "si N: Execute N step", cmd_si},
-    [4] = {"info",
-           "info r: Printf the info about register\ninfo w: Printf the info "
-           "about watch point",
-           cmd_info},
-    [5] = {"p", "p EXPR: Calculate the value of the expression", cmd_p},
-    [6] = {"x", "x N EXPR: Scan memory from expr", cmd_x},
-    [7] = {"w", "w EXPR: Watch the value of EXPR", cmd_w},
+    {"si", "si N: Execute N step", cmd_si},
+    {"info",
+     "info r: Printf the info about register\ninfo w: Printf the info "
+     "about watch point",
+     cmd_info},
+    {"p", "p EXPR: Calculate the value of the expression", cmd_p},
+    {"x", "x N EXPR: Scan memory from expr", cmd_x},
+    {"w", "w EXPR: Watch the value of EXPR", cmd_w},
 };
 
 #define NR_CMD ARRLEN(cmd_table)
