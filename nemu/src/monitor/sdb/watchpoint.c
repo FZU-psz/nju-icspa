@@ -15,6 +15,7 @@
 
 #include "sdb.h"
 #include "utils.h"
+#include <string.h>
 
 #define NR_WP 32
 
@@ -73,11 +74,16 @@ void free_wp(WP *wp){
   assert(0);
 }
 void scan_wp(){
+  
+  char expr_buffer[256];
+
   WP* p=head;
   bool flag = false;
   while(p!=NULL){
     bool success=true;
-    word_t val = expr(p->expr,&success);
+    
+    strncpy(expr_buffer, p->expr, 256);
+    word_t val = expr(expr_buffer,&success);
     if(val != p->val){//值发生了变化
       flag = true;
       p->val = val;
