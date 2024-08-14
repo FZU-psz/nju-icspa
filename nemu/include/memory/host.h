@@ -35,7 +35,7 @@ static inline void host_write(void *addr, int len, word_t data) {
     case 2: *(uint16_t *)addr = data; return;
     case 4: *(uint32_t *)addr = data; return;
     case 8: *(uint64_t *)addr = data; return;
-    IFDEF(CONFIG_ISA64, case 8: *(uint64_t *)addr = data;return);
+    // IFDEF(CONFIG_ISA64, case 8: *(uint64_t *)addr = data;return);
     IFDEF(CONFIG_RT_CHECK, default: assert(0));
   }
 }
