@@ -26,6 +26,5 @@ word_t vaddr_read(vaddr_t addr, int len) {
 }
 
 void vaddr_write(vaddr_t addr, int len, word_t data) {
-  printf("vaddr_t: 0x%x, len: %d, data: 0x%x \n ",addr,len,data);
   paddr_write(addr, len, data);
 }
