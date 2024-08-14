@@ -101,7 +101,7 @@ static int cmd_p(char *args) {
   bool success = true;
   word_t result = expr(args, &success);
   if (success) {
-    printf("0x%08x\n", result);
+    printf("0x%08lx\n", result);
   }
   return 0;
 }
@@ -130,10 +130,10 @@ static int cmd_x(char *args) {
   if (success) {
     for (int i = 0; i < n; i++) {
       if (i % 4 == 0) {
-        printf("0x%08x: ", addr + i);
+        printf("0x%08lx: ", addr + i);
       }
       vaddr_t vaddr = addr + i;
-      printf("0x%02x ", vaddr_read(vaddr, 1));
+      printf("0x%02lx ", vaddr_read(vaddr, 1));
       if ((i + 1) % 4 == 0) {
         printf("\n");
       }

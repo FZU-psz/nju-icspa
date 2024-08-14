@@ -84,7 +84,7 @@ void scan_wp(){
     strncpy(expr_buffer, p->expr, 256);
     word_t val = expr(expr_buffer,&success);
     if(val != p->val){//值发生了变化
-    printf("Old value %d; New value 0x%08x\n",p->val,val);
+    printf("Old value %d; New value 0x%08lx\n",p->val,val);
       flag = true;
       p->val = val;
     }
