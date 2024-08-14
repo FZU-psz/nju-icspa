@@ -40,6 +40,7 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_
   int rs2 = BITS(i, 24, 20);
   *rd     = BITS(i, 11, 7);
 
+  printf("0x%08x\n", i);
   printf("rd: %d, rs1: %d, rs2: %d\n", *rd, rs1, rs2);
 
   switch (type) {
