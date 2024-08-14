@@ -39,6 +39,9 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_
   int rs1 = BITS(i, 19, 15);
   int rs2 = BITS(i, 24, 20);
   *rd     = BITS(i, 11, 7);
+
+  printf("rd: %d, rs1: %d, rs2: %d\n", *rd, rs1, rs2);
+
   switch (type) {
     case TYPE_I: src1R();          immI(); break;
     case TYPE_U:                   immU(); break;
@@ -58,7 +61,6 @@ static int decode_exec(Decode *s) {
 }
 
   INSTPAT_START();
-  printf("%d, %d\n", rd, src1);
   INSTPAT("??????? ????? ????? 000 ????? 00100 11", addi   , I, R(rd) = R(src1) + imm);
   //
   INSTPAT("??????? ????? ????? ??? ????? 00101 11", auipc  , U, R(rd) = s->pc + imm);
