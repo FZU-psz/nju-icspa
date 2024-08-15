@@ -58,7 +58,7 @@ enum {
 // 12) << 12) | (BITS(i, 20, 20) << 11); } while(0)
 #define immB()                                                                 \
   do {                                                                         \
-    *imm = (SEXT(BITS(i, 31, 31), 1) << 12) | (BITS(i, 7, 7) << 11) |         \
+    *imm = (SEXT(BITS(i, 31, 31), 1) << 12) | (BITS(i, 7, 7) << 11) |          \
            (BITS(i, 30, 25) << 5) | (BITS(i, 11, 8) << 1);                     \
   } while (0)
 #define immJ()                                                                 \
@@ -73,8 +73,7 @@ enum {
     } else {                                                                   \
       *imm = *imm & 0x000FFFFF;                                                \
     }                                                                          \
-  }                                                                            \
-  while (0)
+  } while (0)
 
 static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2,
                            word_t *imm, int type) {
@@ -133,12 +132,14 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? 010 ????? 0100011", sw, S,
           Mw(src1 + imm, 4, src2));
   INSTPAT("??????? ????? ????? 010 ????? 0000011", lw, I,
-         R(rd) = Mr(src1 + imm, 4));
-  INSTPAT("??????? ????? ????? 000 ????? 0110011", add, R,
-         R(rd) = src1 + src2);
-  INSTPAT("??????? ????? ????? 011 ????? 0010011", sltiu, I,R(rd)= (src1 < imm)?1:0);
+          R(rd) = Mr(src1 + imm, 4));
+  INSTPAT("??????? ????? ????? 000 ????? 0110011", add, R, R(rd) = src1 + src2);
+  INSTPAT("??????? ????? ????? 011 ????? 0010011", sltiu, I,
+          R(rd) = (src1 < imm) ? 1 : 0);
   INSTPAT("??????? ????? ????? 000 ????? 1100011", beq, B,
           if (src1 == src2) s->dnpc = s->pc + imm);
+  INSTPAT("??????? ????? ????? 001 ????? 1100011", bne, B,
+          if (src1 != src2) s->dnpc = s->pc + imm);
   //
   INSTPAT("??????? ????? ????? ??? ????? 00101 11", auipc, U,
           R(rd) = s->pc + imm);
