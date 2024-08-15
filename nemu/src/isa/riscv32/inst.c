@@ -30,6 +30,7 @@ enum {
   TYPE_S,
   TYPE_N, // none
   TYPE_J, // jump
+  TYPE_R,
 };
 
 #define src1R()                                                                \
@@ -92,7 +93,11 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2,
     break;
   case TYPE_J:
     immJ();
-    printf("imm= %d\n", *imm);
+    // printf("imm= %d\n", *imm);
+    break;
+  case TYPE_R:
+    src1R();
+    src2R();
     break;
   }
 }
@@ -119,6 +124,8 @@ static int decode_exec(Decode *s) {
           Mw(src1 + imm, 4, src2));
   INSTPAT("??????? ????? ????? 010 ????? 0000011", lw, I,
          R(rd) = Mr(src1 + imm, 4));
+  INSTPAT("??????? ????? ????? 000 ????? 0110011", add, R,
+         R(rd) = src1 + src2);
   //
   INSTPAT("??????? ????? ????? ??? ????? 00101 11", auipc, U,
           R(rd) = s->pc + imm);
