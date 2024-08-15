@@ -31,6 +31,7 @@ enum {
   TYPE_N, // none
   TYPE_J, // jump
   TYPE_R,
+  TYPE_B,
 };
 
 #define src1R()                                                                \
@@ -55,7 +56,11 @@ enum {
   } while (0)
 // #define immJ() do { *imm = (SEXT(BITS(i, 31, 31), 10) << 10) | (BITS(i, 19,
 // 12) << 12) | (BITS(i, 20, 20) << 11); } while(0)
-
+#define immB()                                                                 \
+  do {                                                                         \
+    *imm = (SEXT(BITS(i, 31, 31), 1) << 12) | (BITS(i, 7, 7) << 11) |         \
+           (BITS(i, 30, 25) << 5) | (BITS(i, 11, 8) << 1);                     \
+  } while (0)
 #define immJ()                                                                 \
   do {                                                                         \
     uint32_t bit20 = (i & 0x80000000) >> 11;                                   \
@@ -99,6 +104,11 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2,
     src1R();
     src2R();
     break;
+  case TYPE_B:
+    src1R();
+    src2R();
+    immB();
+    break;
   }
 }
 
@@ -127,6 +137,8 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? 000 ????? 0110011", add, R,
          R(rd) = src1 + src2);
   INSTPAT("??????? ????? ????? 011 ????? 0010011", sltiu, I,R(rd)= (src1 < imm)?1:0);
+  INSTPAT("??????? ????? ????? 000 ????? 1100011", beq, B,
+          if (src1 == src2) s->dnpc = s->pc + imm);
   //
   INSTPAT("??????? ????? ????? ??? ????? 00101 11", auipc, U,
           R(rd) = s->pc + imm);
