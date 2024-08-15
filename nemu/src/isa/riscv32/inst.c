@@ -17,6 +17,7 @@
 #include <cpu/cpu.h>
 #include <cpu/ifetch.h>
 #include <cpu/decode.h>
+#include <stdint.h>
 // #include <stdio.h>
 
 #define R(i) gpr(i)
@@ -34,7 +35,16 @@ enum {
 #define immI() do { *imm = SEXT(BITS(i, 31, 20), 12); } while(0)
 #define immU() do { *imm = SEXT(BITS(i, 31, 12), 20) << 12; } while(0)
 #define immS() do { *imm = (SEXT(BITS(i, 31, 25), 7) << 5) | BITS(i, 11, 7); } while(0)
-#define immJ() do { *imm = (SEXT(BITS(i, 31, 31), 10) << 10) | (BITS(i, 19, 12) << 12) | (BITS(i, 20, 20) << 11); } while(0)
+// #define immJ() do { *imm = (SEXT(BITS(i, 31, 31), 10) << 10) | (BITS(i, 19, 12) << 12) | (BITS(i, 20, 20) << 11); } while(0)
+
+#define immJ() do { \
+  uint32_t bit20 = (i & 0x80000000) >> 11;                 \
+  uint32_t bit10_1 = (i & 0x7FC00000) >> 20; \
+  uint32_t bit11 = (i & 0x00100000) >> 9;\
+  uint32_t bit19_12 = (i & 0x000FF000); \
+  *imm = SEXT(bit20 | bit19_12 | bit10_1 | bit11, 32); \
+} while(0)
+
 static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_t *imm, int type) {
   uint32_t i = s->isa.inst.val;
   int rs1 = BITS(i, 19, 15);
