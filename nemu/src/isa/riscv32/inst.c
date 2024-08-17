@@ -136,7 +136,7 @@ static int decode_exec(Decode *s) {
 
   INSTPAT("000000? ????? ????? 101 ????? 0010011", srli, I,
           uint32_t shamt = BITS(imm,5,0);
-          // printf("s = 0x%x, imm = 0x%0x, shamt = 0x%x\n", s->isa.inst.val, imm,shamt);
+          printf("s = 0x%x, imm = 0x%0x, shamt = 0x%x\n", s->isa.inst.val, imm,shamt);
           R(rd) = src1 >> shamt);
 
   INSTPAT("000000? ????? ????? 001 ????? 0010011", slli, I,
