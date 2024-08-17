@@ -58,8 +58,8 @@ enum {
 // 12) << 12) | (BITS(i, 20, 20) << 11); } while(0)
 #define immB()                                                                 \
   do {                                                                         \
-    *imm = SEXT((BITS(i, 31, 31) << 12) | (BITS(i, 30, 25) << 5) |          \
-           (BITS(i, 10, 7) << 1) | BITS(i, 11, 11) ,12);                     \
+    *imm = (SEXT(BITS(i, 31, 31), 1) << 12) | (BITS(i, 7, 7) << 11) |          \
+           (BITS(i, 30, 25) << 5) | (BITS(i, 11, 8) << 1);                     \
   } while (0)
 #define immJ()                                                                 \
   do {                                                                         \
