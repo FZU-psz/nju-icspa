@@ -144,7 +144,7 @@ static int decode_exec(Decode *s) {
           printf("slli: src1 = 0x%x, imm = 0x%x, shamt 0x%d\n", src1, imm,shamt);
           R(rd) = src1 << shamt);
   INSTPAT("0000000 ????? ????? 001 ????? 0110011", sll, R,
-          uint32_t shamt = BITS(src2,4,0);
+          uint32_t shamt = src2 & 0x1f;
           R(rd) = src1 << shamt);
   INSTPAT("??????? ????? ????? 010 ????? 0100011", sw, S,
           Mw(src1 + imm, 4, src2));
