@@ -134,9 +134,9 @@ static int decode_exec(Decode *s) {
   //         uint32_t shamt = BITS(imm,5,0);
   //         R(rd) = (int32_t)src1 >> shamt);
 
-  // INSTPAT("000000? ????? ????? 101 ????? 0010011", srli, I,
-  //         uint32_t shamt = BITS(imm,5,0);
-  //         R(rd) = src1 >> shamt);
+  INSTPAT("000000? ????? ????? 101 ????? 0010011", srli, I,
+          uint32_t shamt = BITS(imm,5,0);
+          R(rd) = src1 >> shamt);
 
   // INSTPAT("000000? ????? ????? 001 ????? 0010011", slli, I,
   //         uint32_t shamt = BITS(imm,5,0);
