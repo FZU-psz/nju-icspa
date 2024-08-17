@@ -142,7 +142,7 @@ static int decode_exec(Decode *s) {
   INSTPAT(
       "000000? ????? ????? 001 ????? 0010011", slli, I,
       uint32_t shamt = BITS(imm, 5, 0);
-      printf("slli: src1 = 0x%x, imm = 0x%x, shamt 0x%d\n", src1, imm, shamt);
+      // printf("slli: src1 = 0x%x, imm = 0x%x, shamt 0x%d\n", src1, imm, shamt);
       R(rd) = src1 << shamt);
   INSTPAT("0000000 ????? ????? 001 ????? 0110011", sll, R,
           uint32_t shamt = BITS(src2, 4, 0);
@@ -171,7 +171,7 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000001 ????? ????? 000 ????? 0110011", mul, R,
           R(rd) = (int32_t)src1 * (int32_t)src2);
   INSTPAT("0000001 ????? ????? 001 ????? 0110011", mulh, R,
-          R(rd) = ((int64_t)src1 * (int64_t)src2) >> 32);
+          R(rd) = ((int64_t)(int)src1 * (int64_t)(int)src2) >> 32);
   INSTPAT("0000001 ????? ????? 100 ????? 0110011", div, R,
           R(rd) = (int32_t)src1 / (int32_t)src2);
   INSTPAT("0000001 ????? ????? 101 ????? 0110011", divu, R,
