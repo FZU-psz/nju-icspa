@@ -138,10 +138,10 @@ static int decode_exec(Decode *s) {
           // uint32_t shamt = BITS(imm,4,0);
           R(rd) = src1 >> imm);
 
-  INSTPAT("000000? ????? ????? 001 ????? 0010011", slli, I,
-          // uint32_t shamt = BITS(imm,4,0);
-          printf("src1 = %d, imm = %d\n", src1, imm);
-          R(rd) = src1 << imm);
+  // INSTPAT("000000? ????? ????? 001 ????? 0010011", slli, I,
+  //         // uint32_t shamt = BITS(imm,4,0);
+  //         printf("src1 = %d, imm = %d\n", src1, imm);
+  //         R(rd) = src1 << imm);
   // INSTPAT("0000000 ????? ????? 001 ????? 0110011", sll, R,
   //         uint32_t shamt = BITS(src2,4,0);
   //         R(rd) = src1 << shamt);
