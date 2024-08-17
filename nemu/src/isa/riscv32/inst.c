@@ -135,12 +135,12 @@ static int decode_exec(Decode *s) {
   //         R(rd) = (int32_t)src1 >> shamt);
 
   INSTPAT("000000? ????? ????? 101 ????? 0010011", srli, I,
-          uint32_t shamt = BITS(s->isa.inst.val,24,20);
+          uint32_t shamt = BITS(s->isa.inst.val,25,20);
           // printf("s = 0x%x, imm = 0x%0x, shamt = 0x%x\n", s->isa.inst.val, imm,shamt);
           R(rd) = src1 >> shamt);
 
   INSTPAT("000000? ????? ????? 001 ????? 0010011", slli, I,
-          uint32_t shamt = BITS(s->isa.inst.val,24,20);
+          uint32_t shamt = BITS(s->isa.inst.val,25,20);
           printf("slli: src1 = 0x%x, imm = 0x%x, shamt 0x%x\n", src1, imm,shamt);
           R(rd) = src1 << shamt);
   // INSTPAT("0000000 ????? ????? 001 ????? 0110011", sll, R,
