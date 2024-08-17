@@ -131,15 +131,15 @@ static int decode_exec(Decode *s) {
           R(rd) = ((uint32_t)src1 <(uint32_t) imm) ? 1 : 0);
   
   INSTPAT("010000? ????? ????? 101 ????? 0010011", srai, I,
-          uint32_t shamt = BITS(imm,4,0);
+          uint32_t shamt = BITS(imm,5,0);
           R(rd) = (int32_t)src1 >> shamt);
 
   INSTPAT("000000? ????? ????? 101 ????? 0010011", srli, I,
-          uint32_t shamt = BITS(imm,4,0);
+          uint32_t shamt = BITS(imm,5,0);
           R(rd) = src1 >> shamt);
 
   INSTPAT("000000? ????? ????? 001 ????? 0010011", slli, I,
-          uint32_t shamt = BITS(imm,4,0);
+          uint32_t shamt = BITS(imm,5,0);
           R(rd) = src1 << shamt);
   INSTPAT("0000000 ????? ????? 001 ????? 0110011", sll, R,
           int shamt = BITS(src2,4,0);
