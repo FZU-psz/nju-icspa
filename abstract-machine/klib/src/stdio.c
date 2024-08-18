@@ -37,7 +37,7 @@ int sprintf(char *out, const char *fmt, ...) {
       }
       case 's': {
         char *str = va_arg(args, char *);
-        while (*str) {
+        while (*str!='\0') {
           *out = *str;
           out++;
           str++;
