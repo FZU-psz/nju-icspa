@@ -27,22 +27,24 @@ int sprintf(char *out, const char *fmt, ...) {
       case 'd': {
         int num = va_arg(args, int);
         // convert int to str
-        while (num) {
-          *out = num % 10 + '0';
-          out++;
+        char num_str[32];
+        int tail=0;
+        while(num){
+          num_str[tail++] = num%10 + '0';
           num /= 10;
+        }
+        while(--tail>=0){
+          *out++ = num_str[tail];
           len++;
         }
         break;
       }
       case 's': {
         char *str = va_arg(args, char *);
-        while (*str!='\0') {
-          *out = *str;
-          out++;
-          str++;
+        while (*str!='\0'){
+          *out++ = *str++; 
           len++;
-        }
+        };
         break;
       }
       default:
