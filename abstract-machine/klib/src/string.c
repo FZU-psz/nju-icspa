@@ -93,7 +93,7 @@ int strncmp(const char *s1, const char *s2, size_t n) {
 
 void *memset(void *s, int c, size_t n) {
   // panic("Not implemented");
-  unsigned char *p = s;
+  unsigned char *p = s; //unsingned char is used to avoid overflow 
   while(n--) {
     *p++ = (unsigned char)c;
   }
@@ -103,14 +103,14 @@ void *memset(void *s, int c, size_t n) {
 void *memmove(void *dst, const void *src, size_t n) {
   // panic("Not implemented");
   size_t i = 0;
-  if (dst < src) {
+  if (dst < src) { // normal copy 
     while (i < n) {
       ((char *)dst)[i] = ((char *)src)[i];
       i++;
     }
   } else { // avoid overlap
     i = n;
-    while (i > 0) {
+    while (i > 0) { //copy from tail to head 
       ((char *)dst)[i - 1] = ((char *)src)[i - 1];
       i--;
     }
