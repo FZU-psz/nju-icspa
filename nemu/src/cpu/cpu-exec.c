@@ -17,7 +17,7 @@
 #include <cpu/decode.h>
 #include <cpu/difftest.h>
 #include <locale.h>
-// #include <utils.h>
+#include <utils.h>
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
  * This is useful when you use the `si' command.
@@ -118,7 +118,7 @@ static void statistic() {
 void assert_fail_msg() {
 // iringbuf
 #ifdef CONFIG_ITRACE
-  // display_inst();
+  display_inst();
 #endif
   isa_reg_display();
   statistic();

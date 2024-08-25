@@ -77,6 +77,6 @@ uint64_t get_time();
 #endif
 
 // // ------------------itrace ----------------------------
-// void trace_inst(word_t pc,uint32_t inst);
-// void display_inst();
+void trace_inst(word_t pc,uint32_t inst);
+void display_inst();
 // void 
