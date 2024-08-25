@@ -79,4 +79,5 @@ uint64_t get_time();
 // // ------------------itrace ----------------------------
 void trace_inst(word_t pc,uint32_t inst);
 void display_inst();
-// void 
+
+void display_mem_addr(word_t addr,int len);

@@ -42,3 +42,7 @@ void display_inst() {
   } while (i = (i + 1) % MAX_IRINGBUFFER_SIZE, i != end);
   printf(ANSI_NONE);
 }
+
+void display_mem_addr(word_t addr, int len) {
+  printf("addr = " FMT_WORD ", len = %d\n", addr, len);
+}
