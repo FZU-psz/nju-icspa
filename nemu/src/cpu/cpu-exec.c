@@ -34,12 +34,13 @@ void device_update();
 // 扫描监视点
 extern void scan_wp();
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
+  printf("=====");
 #ifdef CONFIG_ITRACE_COND
   if (ITRACE_COND) { log_write("%s\n", _this->logbuf); }
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
-
+  printf("-----------");
   //扫描wp 如果监视点的值放生了变换，停止执行，用户可以在交互界面查看任意变量的值
   scan_wp();
 }
@@ -49,6 +50,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
   s->snpc = pc;
   isa_exec_once(s);
   cpu.pc = s->dnpc;
+
   // itrace 
 #ifdef CONFIG_ITRACE
   char *p = s->logbuf;
@@ -65,7 +67,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
   space_len = space_len * 3 + 1;
   memset(p, ' ', space_len);
   p += space_len;
-
+  // 反汇编
 #ifndef CONFIG_ISA_loongarch32r
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
   disassemble(p, s->logbuf + sizeof(s->logbuf) - p,
@@ -84,7 +86,7 @@ static void execute(uint64_t n) {
     g_nr_guest_inst ++;
     trace_and_difftest(&s, cpu.pc);
     // printf("=========\n");
-    if (nemu_state.state != NEMU_RUNNING) {printf("break\n");break;}
+    if (nemu_state.state != NEMU_RUNNING) {break;}
     IFDEF(CONFIG_DEVICE, device_update());
   }
 }
