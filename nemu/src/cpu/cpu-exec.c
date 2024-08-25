@@ -83,8 +83,8 @@ static void execute(uint64_t n) {
     exec_once(&s, cpu.pc);
     g_nr_guest_inst ++;
     trace_and_difftest(&s, cpu.pc);
-    printf("=========\n");
-    if (nemu_state.state != NEMU_RUNNING) break;
+    // printf("=========\n");
+    if (nemu_state.state != NEMU_RUNNING) {printf("break\n");break;}
     IFDEF(CONFIG_DEVICE, device_update());
   }
 }
