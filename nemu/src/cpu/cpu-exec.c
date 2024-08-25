@@ -117,6 +117,7 @@ static void statistic() {
 
 void assert_fail_msg() {
 // iringbuf
+  printf("fail\n");
 #ifdef CONFIG_ITRACE
   display_inst();
 #endif
