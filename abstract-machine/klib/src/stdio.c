@@ -29,13 +29,13 @@ int sprintf(char *out, const char *fmt, ...) {
         // convert int to str
         char num_str[32];
         int tail=0;
-        while(num){
+        while(num){ // store num in reverse order
           num_str[tail++] = num%10 + '0';
           num /= 10;
         }
-        while(--tail>=0){
+        while(--tail>=0){ // copy str to out
           *out++ = num_str[tail];
-          len++;
+          len++; //
         }
         break;
       }
