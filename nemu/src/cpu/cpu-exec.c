@@ -34,13 +34,13 @@ void device_update();
 // 扫描监视点
 extern void scan_wp();
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
-  printf("=====");
+  printf("=====\n");
 #ifdef CONFIG_ITRACE_COND
   if (ITRACE_COND) { log_write("%s\n", _this->logbuf); }
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
-  printf("-----------");
+  printf("-----------\n");
   //扫描wp 如果监视点的值放生了变换，停止执行，用户可以在交互界面查看任意变量的值
   scan_wp();
 }
