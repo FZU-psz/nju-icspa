@@ -78,6 +78,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
 
 static void execute(uint64_t n) {
   Decode s;
+  printf("n = %ld\n", n);
   for (;n > 0; n --) {
     exec_once(&s, cpu.pc);
     g_nr_guest_inst ++;
@@ -103,7 +104,9 @@ void assert_fail_msg() {
 
 /* Simulate how the CPU works. */
 void cpu_exec(uint64_t n) {
+  // 仅在执行的指令数小于MAX_INST_TO_PRINT时输出汇编代码
   g_print_step = (n < MAX_INST_TO_PRINT);
+  //  nemu_state 为 NEMU_RUNNING 时，表示正常运行, 否则表示程序已经执行结束
   switch (nemu_state.state) {
     case NEMU_END: case NEMU_ABORT:
       printf("Program execution has ended. To restart the program, exit NEMU and run again.\n");
