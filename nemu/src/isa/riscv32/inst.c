@@ -155,30 +155,28 @@ static int decode_exec(Decode *s) {
   // ret : jalr x0,0(x1)
   INSTPAT("??????? ????? ????? ??? ????? 1101111", jal, J,
           s->dnpc = s->pc + imm;
-        //   IFDEF(CONFIG_ITRACE,
-        //         {
-        //           if (rd == 1) { // x1: return address for jumps
-        //             trace_func_call(s->pc, s->dnpc, false);
-        //           }
-        //         }
-        //   );
+          IFDEF(CONFIG_ITRACE,
+                {
+                  if (rd == 1) { // x1: return address for jumps
+                    trace_func_call(s->pc, s->dnpc, false);
+                  }
+                });
           R(rd) = s->pc + 4;);
   INSTPAT("??????? ????? ????? ??? ????? 1100111", jalr, I, int t = s->pc + 4;
-        //   IFDEF(CONFIG_ITRACE,
-        //         {
-        //           if (s->isa.inst.val == 0x00008067) {
-        //             trace_func_ret(s->pc); // ret -> jalr x0, 0(x1)
-        //           } else if (rd == 1) {
-        //             trace_func_call(s->pc, s->dnpc, false);
-        //           } else if (rd == 0 && imm == 0) {
-        //             trace_func_call(
-        //                 s->pc, s->dnpc,
-        //                 true); // jr rs1 -> jalr x0, 0(rs1), which may be other
-        //                        // control flow e.g. 'goto','for'
-        //           }
-        //         }) ;
-        s->dnpc = (src1 + imm) & ~1;
-          R(rd) = t);
+          IFDEF(CONFIG_ITRACE,
+                {
+                  if (s->isa.inst.val == 0x00008067) {
+                    trace_func_ret(s->pc); // ret -> jalr x0, 0(x1)
+                  } else if (rd == 1) {
+                    trace_func_call(s->pc, s->dnpc, false);
+                  } else if (rd == 0 && imm == 0) {
+                    trace_func_call(
+                        s->pc, s->dnpc,
+                        true); // jr rs1 -> jalr x0, 0(rs1), which may be other
+                               // control flow e.g. 'goto','for'
+                  }
+                });
+          s->dnpc = (src1 + imm) & ~1; R(rd) = t);
 
   INSTPAT("??????? ????? ????? 010 ????? 0000011", lw, I,
           R(rd) = Mr(src1 + imm, 4));
