@@ -76,8 +76,14 @@ uint64_t get_time();
 
 #endif
 
-// // ------------------itrace ----------------------------
+// ------------------iringtrace ----------------------------
 void trace_inst(word_t pc,uint32_t inst);
 void display_inst();
 
+// -----------------------mtrace --------------------------
 void display_mem_addr(word_t addr,int len);
+
+// -----------------------ftrace --------------------------
+void trace_func_call(paddr_t pc ,paddr_t target, bool is_tail);
+
+void trace_func_ret(paddr_t pc);

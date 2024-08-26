@@ -18,6 +18,7 @@
 #include <cpu/decode.h>
 #include <cpu/ifetch.h>
 #include <stdint.h>
+#include <utils.h>
 // #include <stdio.h>
 
 #define R(i) gpr(i)
@@ -137,10 +138,9 @@ static int decode_exec(Decode *s) {
   INSTPAT("000000? ????? ????? 101 ????? 0010011", srli, I,
           uint32_t shamt = BITS(imm, 5, 0);
           R(rd) = src1 >> shamt);
-  INSTPAT(
-      "000000? ????? ????? 001 ????? 0010011", slli, I,
-      uint32_t shamt = BITS(imm, 5, 0);
-      R(rd) = src1 << shamt);
+  INSTPAT("000000? ????? ????? 001 ????? 0010011", slli, I,
+          uint32_t shamt = BITS(imm, 5, 0);
+          R(rd) = src1 << shamt);
   INSTPAT("0000000 ????? ????? 001 ????? 0110011", sll, R,
           uint32_t shamt = BITS(src2, 4, 0);
           R(rd) = src1 << shamt);
@@ -150,10 +150,34 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? 001 ????? 0100011", sh, S,
           Mw(src1 + imm, 2, src2));
 
-  INSTPAT("??????? ????? ????? ??? ????? 1101111", jal, J, R(rd) = s->pc + 4;
-          s->dnpc = s->pc + imm);
+  // jump inst: when call func, execute jal , return execute jalr
+  // j: jal,x0,offset
+  // ret : jalr x0,0(x1)
+  INSTPAT("??????? ????? ????? ??? ????? 1101111", jal, J,
+          s->dnpc = s->pc + imm;
+          IFDEF(CONFIG_ITRACE,
+                {
+                  if (rd == 1) { // x1: return address for jumps
+                    trace_func_call(s->pc, s->dnpc, false);
+                  }
+                }
+          );
+          R(rd) = s->pc + 4;);
   INSTPAT("??????? ????? ????? ??? ????? 1100111", jalr, I, int t = s->pc + 4;
-          s->dnpc = (src1 + imm) & ~1; R(rd) = t);
+          IFDEF(CONFIG_ITRACE,
+                {
+                  if (s->isa.inst.val == 0x00008067) {
+                    trace_func_ret(s->pc); // ret -> jalr x0, 0(x1)
+                  } else if (rd == 1) {
+                    trace_func_call(s->pc, s->dnpc, false);
+                  } else if (rd == 0 && imm == 0) {
+                    trace_func_call(
+                        s->pc, s->dnpc,
+                        true); // jr rs1 -> jalr x0, 0(rs1), which may be other
+                               // control flow e.g. 'goto','for'
+                  }
+                }) s->dnpc = (src1 + imm) & ~1;
+          R(rd) = t);
 
   INSTPAT("??????? ????? ????? 010 ????? 0000011", lw, I,
           R(rd) = Mr(src1 + imm, 4));
@@ -226,6 +250,6 @@ static int decode_exec(Decode *s) {
 // 执行pc中的指令
 int isa_exec_once(Decode *s) {
   s->isa.inst.val = inst_fetch(&s->snpc, 4);
-  IFDEF(CONFIG_ITRACE,trace_inst(s->pc,s->isa.inst.val));
+  IFDEF(CONFIG_ITRACE, trace_inst(s->pc, s->isa.inst.val));
   return decode_exec(s);
 }
