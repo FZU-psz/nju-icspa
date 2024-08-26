@@ -111,6 +111,22 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2,
     break;
   }
 }
+#define MAYBE_FUNC_JAL(s)                                                      \
+  IFDEF(CONFIG_ITRACE, {                                                       \
+    if (rd == 1) {                                                             \
+      trace_func_call(s->pc, s->dnpc, false);                                  \
+    }                                                                          \
+  })
+#define MAYBE_FUNC_JALR(s)                                                     \
+  IFDEF(CONFIG_ITRACE, {                                                       \
+    if (s->isa.inst.val == 0x00008067) {                                       \
+      trace_func_ret(s->pc);                                                   \
+    } else if (rd == 1) {                                                      \
+      trace_func_call(s->pc, s->dnpc, false);                                  \
+    } else if (rd == 0 && imm == 0) {                                          \
+      trace_func_call(s->pc, s->dnpc, true);                                   \
+    }                                                                          \
+  })
 
 static int decode_exec(Decode *s) {
   int rd = 0;
@@ -153,32 +169,39 @@ static int decode_exec(Decode *s) {
   // jump inst: when call func, execute jal , return execute jalr
   // j: jal,x0,offset
   // ret : jalr x0,0(x1)
-  INSTPAT("??????? ????? ????? ??? ????? 1101111", jal, J,
+  INSTPAT("??????? ????? ????? ??? ????? 11011 11", jal, J,
           s->dnpc = s->pc + imm;
-          // IFDEF(CONFIG_ITRACE,
-          //       {
-          //         if (rd == 1) { // x1: return address for jumps
-          //           trace_func_call(s->pc, s->dnpc, false);
-          //         }
-          //       });
-          R(rd) = s->pc + 4;);
-  INSTPAT(
-      "??????? ????? ????? ??? ????? 1100111", jalr, I, int t = s->pc + 4;
-      s->dnpc = (src1 + imm) & ~1;
-      // IFDEF(CONFIG_ITRACE,
-      //       {
-      //         if (s->isa.inst.val == 0x00008067) {
-      //           trace_func_ret(s->pc); // ret -> jalr x0, 0(x1)
-      //         } else if (rd == 1) {
-      //           trace_func_call(s->pc, s->dnpc, false);
-      //         } else if (rd == 0 && imm == 0) {
-      //           trace_func_call(
-      //               s->pc, s->dnpc,
-      //               true); // jr rs1 -> jalr x0, 0(rs1), which may be other
-      //                      // control flow e.g. 'goto','for'
-      //         }
-      //       });
-      R(rd) = t);
+          MAYBE_FUNC_JAL(s); R(rd) = s->pc + 4);
+  INSTPAT("??????? ????? ????? 000 ????? 11001 11", jalr, I,
+          s->dnpc = (src1 + imm) & ~(word_t)1;
+          MAYBE_FUNC_JALR(s); R(rd) = s->pc + 4);
+  // INSTPAT("??????? ????? ????? ??? ????? 1101111", jal, J,
+  //         s->dnpc = s->pc + imm;
+  //         // IFDEF(CONFIG_ITRACE,
+  //         //       {
+  //         //         if (rd == 1) { // x1: return address for jumps
+  //         //           trace_func_call(s->pc, s->dnpc, false);
+  //         //         }
+  //         //       });
+  //         R(rd) = s->pc + 4;);
+  // INSTPAT(
+  //     "??????? ????? ????? ??? ????? 1100111", jalr, I, int t = s->pc + 4;
+  //     s->dnpc = (src1 + imm) & ~1;
+  //     // IFDEF(CONFIG_ITRACE,
+  //     //       {
+  //     //         if (s->isa.inst.val == 0x00008067) {
+  //     //           trace_func_ret(s->pc); // ret -> jalr x0, 0(x1)
+  //     //         } else if (rd == 1) {
+  //     //           trace_func_call(s->pc, s->dnpc, false);
+  //     //         } else if (rd == 0 && imm == 0) {
+  //     //           trace_func_call(
+  //     //               s->pc, s->dnpc,
+  //     //               true); // jr rs1 -> jalr x0, 0(rs1), which may be
+  //     other
+  //     //                      // control flow e.g. 'goto','for'
+  //     //         }
+  //     //       });
+  //     R(rd) = t);
 
   INSTPAT("??????? ????? ????? 010 ????? 0000011", lw, I,
           R(rd) = Mr(src1 + imm, 4));
