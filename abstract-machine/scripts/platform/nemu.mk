@@ -15,7 +15,7 @@ LDFLAGS   += --gc-sections -e _start
 # NEMUFLAGS += -e $(IMAGE).elf
 # NEMUFLAGS += -b
 NEMUFLAGS += -l $(shell dirname $(IMAGE).elf)/nemu-log.txt
-NEMUFLAGS += -e $(shell dirname $(IMAGE).elf) # parse elf
+NEMUFLAGS += -e $(shell dirname &(IMAGE).elf) # parse elf
 # NEMUFLAGS += -e $(IMAGE).elf
 NEMUFLAGS += -b
 CFLAGS += -DMAINARGS=\"$(mainargs)\"
