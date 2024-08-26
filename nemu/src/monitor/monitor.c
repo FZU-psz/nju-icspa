@@ -83,7 +83,7 @@ static int parse_args(int argc, char *argv[]) {
   int o;
   while ( (o = getopt_long(argc, argv, "-bhl:d:p:e", table, NULL)) != -1) {
     switch (o) {
-      case 'e': elf_file = optarg;printf("elf_file:%s\n",optarg); break;
+      case 'e': elf_file = optarg;printf("=================elf_file:%s\n",optarg); break;
       case 'b': sdb_set_batch_mode(); break;
       case 'p': sscanf(optarg, "%d", &difftest_port); break;
       case 'l': log_file = optarg; printf("==================log_file %s\n",optarg);break;
