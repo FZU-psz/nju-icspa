@@ -107,11 +107,11 @@ void init_monitor(int argc, char *argv[]) {
   /* Perform some global initialization. */
 
   /* Parse elf_file*/
-  parse_elf(elf_file);
+  // parse_elf(elf_file);
 
   /* Parse arguments. */
   parse_args(argc, argv);
-
+  parse_elf(elf_file);
   /* Set random seed. */
   init_rand();
 
