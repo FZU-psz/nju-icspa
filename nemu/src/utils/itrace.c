@@ -458,6 +458,7 @@ void trace_func_call(paddr_t pc, paddr_t target, bool is_tail) {
 	if (call_depth <= 2) return; // ignore _trm_init & main
 
 	int i = find_symbol_func(target, true);
+  printf("call\n");
 	log_write(FMT_PADDR ": %*scall [%s@" FMT_PADDR "]\n",
 		pc,
 		(call_depth-3)*2, "",
