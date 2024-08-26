@@ -176,7 +176,8 @@ static int decode_exec(Decode *s) {
         //                 true); // jr rs1 -> jalr x0, 0(rs1), which may be other
         //                        // control flow e.g. 'goto','for'
         //           }
-        //         }) s->dnpc = (src1 + imm) & ~1;
+        //         }) ;
+        s->dnpc = (src1 + imm) & ~1;
           R(rd) = t);
 
   INSTPAT("??????? ????? ????? 010 ????? 0000011", lw, I,
