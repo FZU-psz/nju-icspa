@@ -72,7 +72,7 @@ static long load_img() {
 
 static int parse_args(int argc, char *argv[]) {
   const struct option table[] = {
-    {"elf", required_argument, NULL,'e'},
+    {"elf", no_argument, NULL,'e'},
     {"batch"    , no_argument      , NULL, 'b'},
     {"log"      , required_argument, NULL, 'l'},
     {"diff"     , required_argument, NULL, 'd'},
@@ -83,7 +83,7 @@ static int parse_args(int argc, char *argv[]) {
   int o;
   while ( (o = getopt_long(argc, argv, "-bhl:d:p:e", table, NULL)) != -1) {
     switch (o) {
-      case 'e': elf_file = optarg;printf("=================elf_file:%s\n",optarg); break;
+      case 'e':  break;
       case 'b': sdb_set_batch_mode(); break;
       case 'p': sscanf(optarg, "%d", &difftest_port); break;
       case 'l': log_file = optarg; printf("==================log_file %s\n",optarg);break;
